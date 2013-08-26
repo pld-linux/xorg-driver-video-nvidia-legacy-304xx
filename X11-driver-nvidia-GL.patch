@@ -1,0 +1,10 @@
+--- NVIDIA-Linux-x86-1.0-6111-pkg1/gl.h	2004-07-27 17:33:20.000000000 +0200
++++ NVIDIA-Linux-x86-1.0-6111-pkg1/gl.h	2004-09-13 13:23:24.188682536 +0200
+@@ -1620,6 +1620,7 @@
+ WINGDIAPI void APIENTRY glVertex4sv (const GLshort *v);
+ WINGDIAPI void APIENTRY glVertexPointer (GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
+ WINGDIAPI void APIENTRY glViewport (GLint x, GLint y, GLsizei width, GLsizei height);
++#define GL_COLOR_INDEX8_EXT               0x80E5
+ 
+ #ifdef __DEFINED_GLAPI
+ # undef GLAPI
