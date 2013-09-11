@@ -24,7 +24,8 @@
 %define		no_install_post_check_so 1
 
 %define		rel 3
-%define		pname	xorg-driver-video-nvidia-legacy-304xx
+%define		mname	nvidia-legacy-304xx
+%define		pname	xorg-driver-video-%{mname}
 Summary:	Linux Drivers for nVidia GeForce/Quadro Chips
 Summary(hu.UTF-8):	Linux meghajtók nVidia GeForce/Quadro chipekhez
 Summary(pl.UTF-8):	Sterowniki do kart graficznych nVidia GeForce/Quadro
@@ -179,7 +180,7 @@ Eszközök az nVidia grafikus kártyák beállításához.
 %description progs -l pl.UTF-8
 Narzędzia do zarządzania kartami graficznymi nVidia.
 
-%package -n kernel%{_alt_kernel}-video-nvidia
+%package -n kernel%{_alt_kernel}-%{mname}
 Summary:	nVidia kernel module for nVidia Architecture support
 Summary(de.UTF-8):	Das nVidia-Kern-Modul für die nVidia-Architektur-Unterstützung
 Summary(hu.UTF-8):	nVidia Architektúra támogatás Linux kernelhez.
@@ -198,16 +199,16 @@ Requires:	%{pname} = %{epoch}:%{version}
 Provides:	X11-driver-nvidia(kernel)
 Obsoletes:	XFree86-nvidia-kernel
 
-%description -n kernel%{_alt_kernel}-video-nvidia
+%description -n kernel%{_alt_kernel}-%{mname}
 nVidia Architecture support for Linux kernel.
 
-%description -n kernel%{_alt_kernel}-video-nvidia -l de.UTF-8
+%description -n kernel%{_alt_kernel}-%{mname} -l de.UTF-8
 Die nVidia-Architektur-Unterstützung für den Linux-Kern.
 
-%description -n kernel%{_alt_kernel}-video-nvidia -l hu.UTF-8
+%description -n kernel%{_alt_kernel}-%{mname} -l hu.UTF-8
 nVidia Architektúra támogatás Linux kernelhez.
 
-%description -n kernel%{_alt_kernel}-video-nvidia -l pl.UTF-8
+%description -n kernel%{_alt_kernel}-%{mname} -l pl.UTF-8
 Obsługa architektury nVidia dla jądra Linuksa. Pakiet wymagany przez
 sterownik nVidii dla Xorg/XFree86.
 
@@ -336,17 +337,17 @@ rm -rf $RPM_BUILD_ROOT
 %post
 cat << 'EOF'
 NOTE: You must also install kernel module for this driver to work
-  kernel-video-nvidia-%{version}
+  kernel-%{mname}-%{version}
 
 EOF
 
 %post libs -p /sbin/ldconfig
 %postun	libs -p /sbin/ldconfig
 
-%post	-n kernel%{_alt_kernel}-video-nvidia
+%post	-n kernel%{_alt_kernel}-%{mname}
 %depmod %{_kernel_ver}
 
-%postun	-n kernel%{_alt_kernel}-video-nvidia
+%postun	-n kernel%{_alt_kernel}-%{mname}
 %depmod %{_kernel_ver}
 
 %if %{with userspace}
@@ -425,7 +426,7 @@ EOF
 %endif
 
 %if %{with kernel}
-%files -n kernel%{_alt_kernel}-video-nvidia
+%files -n kernel%{_alt_kernel}-%{mname}
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/*.ko*
 %endif
