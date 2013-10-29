@@ -1,38 +1,61 @@
 # TODO
 # - should -libs Require main package?
 # - drop binary-only nvidia-settings from here, and use nvidia-settings.spec for it?
-# - kernel-drm is required on never kernels. driver for kernel-longterm not requires drm
+# - kernel-drm is required on newer kernels. driver for kernel-longterm not requires drm
 #
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# without kernel packages
 %bcond_without	userspace	# don't build userspace programs
-%bcond_with	force_userspace # force userspace build (useful if alt_kernel is set)
 %bcond_with	settings	# package nvidia-settings here (GPL version of same packaged from nvidia-settings.spec)
 %bcond_with	verbose		# verbose build (V=1)
 
+%if %{without kernel}
+%undefine	with_dist_kernel
+%endif
+
+# The goal here is to have main, userspace, package built once with
+# simple release number, and only rebuild kernel packages with kernel
+# version as part of release number, without the need to bump release
+# with every kernel change.
+%if 0%{?_pld_builder:1} && %{with kernel} && %{with userspace}
+%{error:kernel and userspace cannot be built at the same time on PLD builders}
+exit 1
+%endif
+
 %if "%{_alt_kernel}" != "%{nil}"
 %undefine	with_userspace
+%if 0%{?build_kernels:1}
+%{error:alt_kernel and build_kernels are mutually exclusive}
+exit 1
 %endif
-%if %{with force_userspace}
-%define		with_userspace 1
+%undefine	with_userspace
+%global		_build_kernels		%{alt_kernel}
+%else
+%global		_build_kernels		%{?build_kernels:,%{?build_kernels}}
 %endif
+
 %if %{without userspace}
 # nothing to be placed to debuginfo package
 %define		_enable_debug_packages	0
 %endif
+
 %define		no_install_post_check_so 1
 
-%define		rel 7
+%define		kbrs	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo "BuildRequires:kernel%%{_alt_kernel}-module-build >= 3:2.6.20.2" ; done)
+%define		kpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%kernel_pkg ; done)
+%define		bkpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%build_kernel_pkg ; done)
+
+%define		rel 8
 %define		mname	nvidia-legacy-304xx
 %define		pname	xorg-driver-video-%{mname}
 Summary:	Linux Drivers for nVidia GeForce/Quadro Chips
 Summary(hu.UTF-8):	Linux meghajtók nVidia GeForce/Quadro chipekhez
 Summary(pl.UTF-8):	Sterowniki do kart graficznych nVidia GeForce/Quadro
-Name:		%{pname}%{_alt_kernel}
+Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
 # when updating version here, keep nvidia-settings.spec in sync as well
 Version:	304.88
-Release:	%{rel}
+Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 Epoch:		1
 License:	nVidia Binary
 Group:		X11
@@ -52,12 +75,10 @@ Patch1:		X11-driver-nvidia-desktop.patch
 Patch2:		linux-3.10-i2c.patch
 Patch3:		linux-3.10-procfs.patch
 Patch4:		linux-3.11.patch
+Patch5:		kbuild.patch
 URL:		http://www.nvidia.com/object/unix.html
-%if %{with kernel}
-%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20.2}
-%endif
-BuildRequires:	%{kgcc_package}
-BuildRequires:	rpmbuild(macros) >= 1.379
+BuildRequires:	rpmbuild(macros) >= 1.678
+%{?with_dist_kernel:%{expand:%kbrs}}
 BuildRequires:	sed >= 4.0
 BuildConflicts:	XFree86-nvidia
 Requires:	%{pname}-libs = %{epoch}:%{version}-%{rel}
@@ -180,37 +201,69 @@ Eszközök az nVidia grafikus kártyák beállításához.
 %description progs -l pl.UTF-8
 Narzędzia do zarządzania kartami graficznymi nVidia.
 
-%package -n kernel%{_alt_kernel}-%{mname}
-Summary:	nVidia kernel module for nVidia Architecture support
-Summary(de.UTF-8):	Das nVidia-Kern-Modul für die nVidia-Architektur-Unterstützung
-Summary(hu.UTF-8):	nVidia Architektúra támogatás Linux kernelhez.
-Summary(pl.UTF-8):	Moduł jądra dla obsługi kart graficznych nVidia
-Release:	%{rel}@%{_kernel_ver_str}
-Group:		Base/Kernel
-Requires(post,postun):	/sbin/depmod
-Requires:	dev >= 2.7.7-10
-%if %{with dist_kernel}
-%requires_releq_kernel
-%if "%{_alt_kernel}" == "%{nil}"
-Requires:	%releq_kernel -n drm
-%endif
-%endif
-Requires:	%{pname} = %{epoch}:%{version}
-Provides:	X11-driver-nvidia(kernel)
-Obsoletes:	XFree86-nvidia-kernel
+%define	kernel_pkg()\
+%package -n kernel%{_alt_kernel}-%{mname}\
+Summary:	nVidia kernel module for nVidia Architecture support\
+Summary(de.UTF-8):	Das nVidia-Kern-Modul für die nVidia-Architektur-Unterstützung\
+Summary(hu.UTF-8):	nVidia Architektúra támogatás Linux kernelhez\
+Summary(pl.UTF-8):	Moduł jądra dla obsługi kart graficznych nVidia\
+Release:	%{rel}@%{_kernel_ver_str}\
+Group:		Base/Kernel\
+Requires(post,postun):	/sbin/depmod\
+Requires:	dev >= 2.7.7-10\
+%if %{with dist_kernel}\
+%requires_releq_kernel\
+%if %{_kernel_version_code} >= %{_kernel_version_magic 3 10 0}\
+Requires:	%{releq_kernel -n drm}\
+%endif\
+Requires(postun):	%releq_kernel\
+%endif\
+Requires:	%{pname} = %{epoch}:%{version}\
+Provides:	X11-driver-nvidia(kernel)\
+Obsoletes:	XFree86-nvidia-kernel\
+\
+%description -n kernel%{_alt_kernel}-%{mname}\
+nVidia Architecture support for Linux kernel.\
+\
+%description -n kernel%{_alt_kernel}-%{mname} -l de.UTF-8\
+Die nVidia-Architektur-Unterstützung für den Linux-Kern.\
+\
+%description -n kernel%{_alt_kernel}-%{mname} -l hu.UTF-8\
+nVidia Architektúra támogatás Linux kernelhez.\
+\
+%description -n kernel%{_alt_kernel}-%{mname} -l pl.UTF-8\
+Obsługa architektury nVidia dla jądra Linuksa. Pakiet wymagany przez\
+sterownik nVidii dla Xorg/XFree86.\
+\
+%files -n kernel%{_alt_kernel}-%{mname}\
+%defattr(644,root,root,755)\
+/lib/modules/%{_kernel_ver}/misc/*.ko*\
+\
+%post	-n kernel%{_alt_kernel}-%{mname}\
+%depmod %{_kernel_ver}\
+\
+%postun	-n kernel%{_alt_kernel}-%{mname}\
+%depmod %{_kernel_ver}\
+%{nil}
 
-%description -n kernel%{_alt_kernel}-%{mname}
-nVidia Architecture support for Linux kernel.
+%define build_kernel_pkg()\
+cd kernel\
+ln -sf Makefile.kbuild Makefile\
+#cat >> Makefile <<'EOF'\
+#\
+#$(obj)/nv-kernel.o: $(src)/nv-kernel.o.bin\
+#	cp $< $@\
+#EOF\
+#mv nv-kernel.o{,.bin}\
+#build_kernel_modules -m nvidia\
+%{__make} SYSSRC=%{_kernelsrcdir} clean\
+ln -sf Makefile.kbuild Makefile\
+%{__make} SYSSRC=%{_kernelsrcdir} module\
+cd ..\
+%install_kernel_modules -D installed -m kernel/nvidia -d misc\
+%{nil}
 
-%description -n kernel%{_alt_kernel}-%{mname} -l de.UTF-8
-Die nVidia-Architektur-Unterstützung für den Linux-Kern.
-
-%description -n kernel%{_alt_kernel}-%{mname} -l hu.UTF-8
-nVidia Architektúra támogatás Linux kernelhez.
-
-%description -n kernel%{_alt_kernel}-%{mname} -l pl.UTF-8
-Obsługa architektury nVidia dla jądra Linuksa. Pakiet wymagany przez
-sterownik nVidii dla Xorg/XFree86.
+%{?with_kernel:%{expand:%kpkg}}
 
 %prep
 cd %{_builddir}
@@ -227,6 +280,7 @@ rm -rf NVIDIA-Linux-x86*-%{version}*
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 install %{SOURCE6} kernel/
 install %{SOURCE7} kernel/
@@ -234,18 +288,7 @@ install -m 755 %{SOURCE8} kernel/
 echo 'EXTRA_CFLAGS += -Wno-pointer-arith -Wno-sign-compare -Wno-unused' >> kernel/Makefile.kbuild
 
 %build
-%if %{with kernel}
-cd kernel
-ln -sf Makefile.kbuild Makefile
-#cat >> Makefile <<'EOF'
-#
-#$(obj)/nv-kernel.o: $(src)/nv-kernel.o.bin
-#	cp $< $@
-#EOF
-#mv nv-kernel.o{,.bin}
-#build_kernel_modules -m nvidia
-%{__make} SYSSRC=%{_kernelsrcdir} module
-%endif
+%{?with_kernel:%{expand:%bkpkg}}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -320,7 +363,8 @@ ln -sf libnvcuvid.so.1 $RPM_BUILD_ROOT%{_libdir}/nvidia/libnvcuvid.so
 %endif
 
 %if %{with kernel}
-%install_kernel_modules -m kernel/nvidia -d misc
+install -d $RPM_BUILD_ROOT
+cp -a installed/* $RPM_BUILD_ROOT
 %endif
 
 install -d $RPM_BUILD_ROOT%{_pkgconfigdir}
@@ -343,12 +387,6 @@ EOF
 
 %post libs -p /sbin/ldconfig
 %postun	libs -p /sbin/ldconfig
-
-%post	-n kernel%{_alt_kernel}-%{mname}
-%depmod %{_kernel_ver}
-
-%postun	-n kernel%{_alt_kernel}-%{mname}
-%depmod %{_kernel_ver}
 
 %if %{with userspace}
 %files
@@ -423,10 +461,4 @@ EOF
 %{_desktopdir}/nvidia-settings.desktop
 %{_pixmapsdir}/nvidia-settings.png
 %endif
-%endif
-
-%if %{with kernel}
-%files -n kernel%{_alt_kernel}-%{mname}
-%defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}/misc/*.ko*
 %endif
