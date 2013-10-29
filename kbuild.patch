@@ -1,0 +1,11 @@
+--- NVIDIA-Linux-x86_64-304.88-no-compat32/kernel/Makefile.kbuild~	2013-10-29 08:01:58.000000000 +0100
++++ NVIDIA-Linux-x86_64-304.88-no-compat32/kernel/Makefile.kbuild	2013-10-29 08:05:38.340350890 +0100
+@@ -286,8 +286,6 @@
+ 	@$(RM) -f $(RESMAN_GLUE_OBJS) $(KERNEL_GLUE_OBJS)
+ 	@$(RM) -f build-in.o nv-linux.o *.d .*.{cmd,flags}
+ 	@$(RM) -f $(MODULE_NAME).{o,ko,mod.{o,c}} $(VERSION_HEADER) *~
+-	@$(RM) -f patches.h
+-	@$(RM) -f conftest*.c conftest.h
+ 	@$(RM) -rf Modules.symvers .tmp_versions
+ 
+ #
