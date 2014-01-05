@@ -46,7 +46,7 @@ exit 1
 %define		kpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%kernel_pkg ; done)
 %define		bkpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%build_kernel_pkg ; done)
 
-%define		rel 8
+%define		rel 1
 %define		mname	nvidia-legacy-304xx
 %define		pname	xorg-driver-video-%{mname}
 Summary:	Linux Drivers for nVidia GeForce/Quadro Chips
@@ -54,15 +54,15 @@ Summary(hu.UTF-8):	Linux meghajtók nVidia GeForce/Quadro chipekhez
 Summary(pl.UTF-8):	Sterowniki do kart graficznych nVidia GeForce/Quadro
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
 # when updating version here, keep nvidia-settings.spec in sync as well
-Version:	304.88
+Version:	304.117
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 Epoch:		1
 License:	nVidia Binary
 Group:		X11
 Source0:	http://us.download.nvidia.com/XFree86/Linux-x86/%{version}/NVIDIA-Linux-x86-%{version}.run
-# Source0-md5:	f60d4aef766029c98914ed665235029a
+# Source0-md5:	023eb03da304a1842fc503c81e3c5694
 Source1:	http://us.download.nvidia.com/XFree86/Linux-x86_64/%{version}/NVIDIA-Linux-x86_64-%{version}-no-compat32.run
-# Source1-md5:	35e0c7d30de795cccb6b95bda991fb77
+# Source1-md5:	8ee9f672028971c6d36118894d0e2c59
 Source2:	xinitrc.sh
 Source3:	gl.pc.in
 Source4:	10-nvidia.conf
@@ -83,7 +83,7 @@ BuildRequires:	sed >= 4.0
 BuildConflicts:	XFree86-nvidia
 Requires:	%{pname}-libs = %{epoch}:%{version}-%{rel}
 Requires:	xorg-xserver-server
-Requires:	xorg-xserver-server(videodrv-abi) <= 14.1
+Requires:	xorg-xserver-server(videodrv-abi) <= 15.0
 Requires:	xorg-xserver-server(videodrv-abi) >= 2.0
 Provides:	xorg-driver-video
 Provides:	xorg-xserver-module(glx)
