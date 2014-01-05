@@ -67,9 +67,6 @@ Source2:	xinitrc.sh
 Source3:	gl.pc.in
 Source4:	10-nvidia.conf
 Source5:	10-nvidia-modules.conf
-Source6:	patches.h
-Source7:	conftest.h
-Source8:	conftest.sh
 Patch0:		X11-driver-nvidia-GL.patch
 Patch1:		X11-driver-nvidia-desktop.patch
 URL:		http://www.nvidia.com/object/unix.html
