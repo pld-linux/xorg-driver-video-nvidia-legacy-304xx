@@ -53,7 +53,6 @@ Summary:	Linux Drivers for nVidia GeForce/Quadro Chips
 Summary(hu.UTF-8):	Linux meghajtók nVidia GeForce/Quadro chipekhez
 Summary(pl.UTF-8):	Sterowniki do kart graficznych nVidia GeForce/Quadro
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-# when updating version here, keep nvidia-settings.spec in sync as well
 Version:	304.117
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 Epoch:		1
@@ -364,12 +363,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 cat << 'EOF'
-NOTE: You must also install kernel module for this driver to work
-  kernel-%{mname}-%{version}
+NOTE: You must also install kernel module for this driver to work:
+  kernel%{_alt_kernel}-%{mname}-%{version}
 
 EOF
 
-%post libs -p /sbin/ldconfig
+%post	libs -p /sbin/ldconfig
 %postun	libs -p /sbin/ldconfig
 
 %if %{with userspace}
