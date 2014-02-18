@@ -46,28 +46,29 @@ exit 1
 %define		kpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%kernel_pkg ; done)
 %define		bkpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%build_kernel_pkg ; done)
 
-%define		rel 2
+%define		rel 1
 %define		mname	nvidia-legacy-304xx
 %define		pname	xorg-driver-video-%{mname}
 Summary:	Linux Drivers for nVidia GeForce/Quadro Chips
 Summary(hu.UTF-8):	Linux meghajtók nVidia GeForce/Quadro chipekhez
 Summary(pl.UTF-8):	Sterowniki do kart graficznych nVidia GeForce/Quadro
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	304.117
+Version:	304.119
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 Epoch:		1
 License:	nVidia Binary
 Group:		X11
 Source0:	http://us.download.nvidia.com/XFree86/Linux-x86/%{version}/NVIDIA-Linux-x86-%{version}.run
-# Source0-md5:	023eb03da304a1842fc503c81e3c5694
+# Source0-md5:	a2acb8066ac296005dbf560ee83ae6d9
 Source1:	http://us.download.nvidia.com/XFree86/Linux-x86_64/%{version}/NVIDIA-Linux-x86_64-%{version}-no-compat32.run
-# Source1-md5:	8ee9f672028971c6d36118894d0e2c59
+# Source1-md5:	fb93002115c99f15b6ca393a90a9c9ec
 Source2:	xinitrc.sh
 Source3:	gl.pc.in
 Source4:	10-nvidia.conf
 Source5:	10-nvidia-modules.conf
 Patch0:		X11-driver-nvidia-GL.patch
 Patch1:		X11-driver-nvidia-desktop.patch
+Patch2:		linux-3.13.patch
 URL:		http://www.nvidia.com/object/unix.html
 BuildRequires:	rpmbuild(macros) >= 1.678
 %{?with_dist_kernel:%{expand:%kbrs}}
@@ -269,6 +270,7 @@ rm -rf NVIDIA-Linux-x86*-%{version}*
 %endif
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 %{?with_kernel:%{expand:%bkpkg}}
