@@ -46,7 +46,7 @@ exit 1
 %define		kpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%kernel_pkg ; done)
 %define		bkpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%build_kernel_pkg ; done)
 
-%define		rel	1
+%define		rel	2
 %define		mname	nvidia-legacy-304xx
 %define		pname	xorg-driver-video-%{mname}
 Summary:	Linux Drivers for nVidia GeForce/Quadro Chips
