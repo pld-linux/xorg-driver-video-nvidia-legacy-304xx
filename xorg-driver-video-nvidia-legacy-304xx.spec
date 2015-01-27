@@ -4,15 +4,10 @@
 # - kernel-drm is required on newer kernels. driver for kernel-longterm not requires drm
 #
 # Conditional build:
-%bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# without kernel packages
 %bcond_without	userspace	# don't build userspace programs
 %bcond_with	settings	# package nvidia-settings here (GPL version of same packaged from nvidia-settings.spec)
 %bcond_with	verbose		# verbose build (V=1)
-
-%if %{without kernel}
-%undefine	with_dist_kernel
-%endif
 
 # The goal here is to have main, userspace, package built once with
 # simple release number, and only rebuild kernel packages with kernel
@@ -70,7 +65,7 @@ Patch0:		X11-driver-nvidia-GL.patch
 Patch1:		X11-driver-nvidia-desktop.patch
 URL:		http://www.nvidia.com/object/unix.html
 BuildRequires:	rpmbuild(macros) >= 1.678
-%{?with_dist_kernel:%{expand:%kbrs}}
+%{?with_kernel:%{expand:%kbrs}}
 BuildRequires:	sed >= 4.0
 BuildConflicts:	XFree86-nvidia
 Requires:	%{pname}-libs = %{epoch}:%{version}-%{rel}
@@ -203,13 +198,11 @@ Release:	%{rel}@%{_kernel_ver_str}\
 Group:		Base/Kernel\
 Requires(post,postun):	/sbin/depmod\
 Requires:	dev >= 2.7.7-10\
-%if %{with dist_kernel}\
 %requires_releq_kernel\
 %if %{_kernel_version_code} >= %{_kernel_version_magic 3 10 0}\
 Requires:	%{releq_kernel -n drm}\
 %endif\
 Requires(postun):	%releq_kernel\
-%endif\
 Requires:	%{pname} = %{epoch}:%{version}\
 Provides:	X11-driver-nvidia(kernel)\
 Obsoletes:	XFree86-nvidia-kernel\
