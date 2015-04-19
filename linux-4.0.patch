@@ -1,0 +1,14 @@
+--- NVIDIA-Linux-x86_64-346.35-no-compat32/kernel/nv-linux.h~	2015-01-11 05:30:46.000000000 +0100
++++ NVIDIA-Linux-x86_64-346.35-no-compat32/kernel/nv-linux.h	2015-04-19 13:51:50.919754915 +0200
+@@ -336,6 +336,11 @@
+ #define NV_SPIN_UNLOCK(lock)      spin_unlock(lock)
+ #define NV_SPIN_UNLOCK_WAIT(lock) spin_unlock_wait(lock)
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 0, 0)
++#define read_cr4 __read_cr4
++#define write_cr4 __write_cr4
++#endif
++
+ #if defined(NVCPU_X86)
+ #ifndef write_cr4
+ #define write_cr4(x) __asm__ ("movl %0,%%cr4" :: "r" (x));
