@@ -103,7 +103,7 @@
 
 +#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 11, 0)
  static int nv_drm_unload(
-+else
++#else
 +static void nv_drm_unload(
 +#endif
      struct drm_device *dev
@@ -115,7 +115,7 @@
          {
 +#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 11, 0)
              return 0;
-+else
++#else
 +            return;
 +#endif
          }
@@ -127,7 +127,7 @@
 
 +#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 11, 0)
      return -ENODEV;
-+else
++#else
 +    return;
 +#endif
  }
