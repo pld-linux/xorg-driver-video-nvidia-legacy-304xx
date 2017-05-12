@@ -13,7 +13,7 @@
 
          #else
 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 10, 0)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 11, 0)
                 return get_user_pages_remote(tsk, mm, start, nr_pages, flags,
                                              pages, vmas);
 +#else
@@ -29,7 +29,7 @@
  }
 
  #if defined(NV_ENABLE_PAT_SUPPORT) && defined(NV_ENABLE_HOTPLUG_CPU)
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 10, 0)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 11, 0)
  static int
  nvidia_cpu_callback(struct notifier_block *nfb, unsigned long action, void *hcpu)
  {
@@ -72,7 +72,7 @@
  #if defined(NV_ENABLE_PAT_SUPPORT) && defined(NV_ENABLE_HOTPLUG_CPU)
          if (nv_pat_mode == NV_PAT_MODE_BUILTIN)
          {
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 10, 0)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 11, 0)
              if (register_hotcpu_notifier(&nv_hotcpu_nfb) != 0)
 +#else
 +            if (cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
@@ -87,7 +87,7 @@
      {
          nv_disable_pat_support();
  #if defined(NV_ENABLE_PAT_SUPPORT) && defined(NV_ENABLE_HOTPLUG_CPU)
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 10, 0)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 11, 0)
          unregister_hotcpu_notifier(&nv_hotcpu_nfb);
 +#else
 +        cpuhp_remove_state_nocalls(CPUHP_AP_ONLINE_DYN);
@@ -97,30 +97,39 @@
  }
 --- kernel/nv-drm.c	2017-03-31 03:42:21.000000000 +0200
 +++ kernel/nv-drm.c	2017-04-06 23:53:14.273356795 +0200
-@@ -48,7 +48,7 @@
+@@ -48,7 +48,11 @@
      return -ENODEV;
  }
 
--static int nv_drm_unload(
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 11, 0)
+ static int nv_drm_unload(
++else
 +static void nv_drm_unload(
++#endif
      struct drm_device *dev
  )
  {
-@@ -60,7 +60,7 @@
+@@ -60,7 +60,11 @@
      {
          if (nvl->dev == dev->pdev)
          {
--            return 0;
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 11, 0)
+             return 0;
++else
 +            return;
++#endif
          }
      }
  
-@@ -64,7 +64,7 @@
+@@ -64,7 +64,11 @@
          }
      }
 
--    return -ENODEV;
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 11, 0)
+     return -ENODEV;
++else
 +    return;
++#endif
  }
 
  static void nv_gem_free(
