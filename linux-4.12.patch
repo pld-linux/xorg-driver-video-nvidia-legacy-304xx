@@ -1,0 +1,45 @@
+--- kernel/nv-vtophys.c	2016-12-09 20:30:08.000000000 +0100
++++ kernel/nv-vtophys.c	2017-05-10 10:05:28.452722808 +0200
+@@ -25,6 +25,9 @@ NvU64 nv_get_phys_address(
+ #else
+     struct mm_struct *mm;
+     pgd_t *pgd = NULL;
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 12, 0)
++    p4d_t *p4d = NULL;
++#endif
+     pmd_t *pmd = NULL;
+     pte_t *pte = NULL;
+     NvU64 retval;
+@@ -41,7 +42,11 @@ NvU64 nv_get_phys_address(
+     if (!NV_PGD_PRESENT(pgd))
+         goto failed;
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 12, 0)
++    pmd = NV_PMD_OFFSET(address, p4d);
++#else
+     pmd = NV_PMD_OFFSET(address, pgd);
++#endif
+     if (!NV_PMD_PRESENT(pmd))
+         goto failed;
+ 
+--- kernel/nv-linux.h	2017-05-10 09:19:05.820789291 +0200
++++ kernel/nv-linux.h	2017-05-10 10:05:57.656844602 +0200
+@@ -1389,11 +1389,16 @@ typedef void irqreturn_t;
+ #define NV_PMD_UNMAP(pmd) pmd_unmap(pmd);
+ #else
+ #if defined(PUD_SHIFT) /* 4-level pgtable */
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 12, 0)
++#define _PGD_P4D p4d
++#else
++#define _PGD_P4D pgd
++#endif
+-#define NV_PMD_OFFSET(address, pgd)                     \
++#define NV_PMD_OFFSET(address, _PGD_P4D)                \
+    ({                                                   \
+         pmd_t *__pmd = NULL;                            \
+         pud_t *__pud;                                   \
+-        __pud = pud_offset(pgd, address);               \
++        __pud = pud_offset(_PGD_P4D, address);          \
+         if ((__pud != NULL) &&                          \
+             !(pud_bad(*__pud) || pud_none(*__pud)))     \
+             __pmd = pmd_offset(__pud, address);         \
