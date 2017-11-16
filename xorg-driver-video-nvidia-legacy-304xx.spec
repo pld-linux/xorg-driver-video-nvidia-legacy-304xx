@@ -25,7 +25,7 @@ exit 1
 
 %define		no_install_post_check_so 1
 
-%define		rel	0.1
+%define		rel	1
 %define		mname	nvidia-legacy-304xx
 %define		pname	xorg-driver-video-%{mname}
 Summary:	Linux Drivers for nVidia GeForce/Quadro Chips
@@ -48,9 +48,8 @@ Source5:	10-nvidia-modules.conf
 Patch0:		X11-driver-nvidia-GL.patch
 Patch1:		X11-driver-nvidia-desktop.patch
 Patch2:		linux-4.0.patch
-Patch3:		linux-4.10.patch
-Patch4:		linux-4.11.patch
-Patch5:		linux-4.12.patch
+Patch3:		linux-4.12.patch
+Patch4:		kernel-4.14.patch
 URL:		http://www.nvidia.com/object/unix.html
 BuildRequires:	rpmbuild(macros) >= 1.701
 %{?with_kernel:%{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:2.6.20.2}}
@@ -251,9 +250,8 @@ rm -rf NVIDIA-Linux-x86*-%{version}*
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p0
-%patch5 -p0
+%patch3 -p0
+%patch4 -p1
 
 %build
 %{?with_kernel:%{expand:%build_kernel_packages}}
