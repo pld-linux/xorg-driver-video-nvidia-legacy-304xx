@@ -14,21 +14,27 @@ diff --git a/kernel/nv-drm.c b/kernel/nv-drm.c
 index 2aa7cc8..23df996 100644
 --- a/kernel/nv-drm.c
 +++ b/kernel/nv-drm.c
-@@ -173,7 +173,7 @@ int __init nv_drm_init(
+@@ -173,7 +173,11 @@ int __init nv_drm_init(
  {
      int ret = 0;
  #if defined(NV_DRM_AVAILABLE)
--    ret = drm_pci_init(&nv_drm_driver, pci_driver);
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0)
+     ret = drm_pci_init(&nv_drm_driver, pci_driver);
++#else
 +    ret = drm_legacy_pci_init(&nv_drm_driver, pci_driver);
++#endif
  #endif
      return ret;
  }
-@@ -183,7 +183,7 @@ void nv_drm_exit(
+@@ -183,7 +183,11 @@ void nv_drm_exit(
  )
  {
  #if defined(NV_DRM_AVAILABLE)
--    drm_pci_exit(&nv_drm_driver, pci_driver);
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0)
+     drm_pci_exit(&nv_drm_driver, pci_driver);
++#else
 +    drm_legacy_pci_exit(&nv_drm_driver, pci_driver);
++#endif
  #endif
  }
  
