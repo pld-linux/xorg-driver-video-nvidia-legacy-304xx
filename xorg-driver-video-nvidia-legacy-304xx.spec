@@ -51,6 +51,7 @@ Patch3:		linux-4.12.patch
 Patch4:		kernel-4.14.patch
 Patch5:		kernel-4.15.patch
 URL:		https://www.nvidia.com/en-us/drivers/unix/
+BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 1.701
 %{?with_kernel:%{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:2.6.20.2}}
 BuildRequires:	sed >= 4.0
@@ -150,11 +151,17 @@ firmy NVIDIA.
 
 %package doc
 Summary:	Documentation for NVIDIA Graphics Driver
+Summary(pl.UTF-8):	Dokumentacja do sterownika graficznego NVIDIA
 Group:		Documentation
+BuildArch:	noarch
 
 %description doc
 NVIDIA Accelerated Linux Graphics Driver README and Installation
 Guide.
+
+%description doc -l pl.UTF-8
+Plik README oraz przewodnik instalacji do akcelerowanego sterownika
+graficznego NVIDIA dla Linuksa.
 
 %package progs
 Summary:	Tools for advanced control of nVidia graphic cards
