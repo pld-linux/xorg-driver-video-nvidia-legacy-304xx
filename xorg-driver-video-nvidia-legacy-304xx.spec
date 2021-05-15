@@ -67,7 +67,6 @@ Conflicts:	XFree86-OpenGL-devel <= 4.2.0-3
 ExclusiveArch:	%{ix86} %{x8664}
 BuildRoot:	%{tmpdir}/%{pname}-%{version}-root-%(id -u -n)
 
-%define		_noautoreqdep	libGL.so.1 libnvcuvid.so
 # libnvidia-encode.so.*.* links with libnvcuvid.so instead of libnvcuvid.so.1
 %define		_noautoreq	libnvcuvid.so
 
