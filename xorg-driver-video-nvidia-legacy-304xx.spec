@@ -74,37 +74,118 @@ BuildRoot:	%{tmpdir}/%{pname}-%{version}-root-%(id -u -n)
 %description
 This driver set adds improved 2D functionality to the Xorg X server as
 well as high performance OpenGL acceleration, AGP support, support for
-most flat panels, and 2D multiple monitor support. Supported hardware:
-modern NVIDIA GeForce (from GeForce2 MX) and Quadro (Quadro4 and up)
-based graphics accelerators.
+most flat panels, and 2D multiple monitor support.
 
-The older graphics chips are unsupported:
-- NV1 and RIVA 128/128ZX chips are supported in the base Xorg install
-  (nv driver)
-- TNT/TNT2/GeForce 256/GeForce2 Ultra/Quadro2 are suported by -legacy
-  drivers.
+Supported hardware:
+- GeForce 6 series
+- GeForce 7/Go 7 series
+- GeForce 8/8M series
+- GeForce 9/9M series
+- GeForce 100/100M series
+- GeForce 200/200M series (excluding G205M)
+- GeForce 300/300M series
+- GeForce 400/400M series (excluding 405M)
+- GeForce 500/500M series
+- GeForce 600 series (excluding GT 635/GTX 645/GTX 650 Ti BOOST)
+- GeForce 600M series (excluding GT 625M/GTX 680MX)
+- ION
+- X class (Tesla X2090)
+- M class (M1060/M2050/M2070/M2070-Q/M2075/M2090)
+- C class (Tesla C*)
+- NVS series (NVS 300/NVS 310/315/NVS 510)
+- NVS mobile series (NVS 2100M/NVS 3100M/NVS 4200M/NVS 5100M/
+  NVS 5200M/NVS 5400M)
+- Quadro SDI
+- Quadro Sync series (G-Sync II/Sync)
+- Quadro Plex series
+- Quadro NVS series (NVS 285/NVS 290/NVS 295/NVS 420/NVS 440/NVS 450)
+- Quadro NVS mobile series (NVS 110M/NVS 120M/MVS 130M/NVS 135M/
+  NVS 140M/NVS 150M/NVS 160M/NVS 320M/NVS 510M)
+- Quadro FX series (CX, FX 350/370/380/470/540/550/560/570/580/1400/
+  1500/1700/1800/2000/3450/3500/3700/3800/4000/4500/4500 X2/4600/
+  4700 X2/4800/5500/5600/5800)
+- Quadro FX mobile series
+- Quadro series (400/410/600/2000/2000D/4000/5000/6000/K5000)
+- Quadro mobile series (1000M/2000M/3000M/4000M/5000M/5010M/K1000M/
+  K2000M/K3000M/K4000M/K5000M)
+- GRID (K1/K2)
 
 %description -l hu.UTF-8
 Ez a meghajtó kibővíti az Xorg X szerver 2D működését OpenGL
 gyorsítással, AGP támogatással és támogatja a több monitort.
-Támogatott hardverek: modern NVIDIA GeForce (GeForce2 MX-től) és
-Quadro (Quadro4 és újabbak) alapú grafikai gyorsítók.
 
-A régekbbi grafikus chipek nem támogatottak:
-- NV1 és RIVA 128/128ZX chipek az alap Xorg telepítéssel (nv meghajtó)
-- TNT/TNT2/GeForce 256/GeForce2 Ultra/Quadro2 a -legacy driverekkel
-  támogatottak.
+Támogatott hardverek:
+- GeForce 6 series
+- GeForce 7/Go 7 series
+- GeForce 8/8M series
+- GeForce 9/9M series
+- GeForce 100/100M series
+- GeForce 200/200M series (- G205M)
+- GeForce 300/300M series
+- GeForce 400/400M series (- 405M)
+- GeForce 500/500M series
+- GeForce 600 series (- GT 635/GTX 645/GTX 650 Ti BOOST)
+- GeForce 600M series (- GT 625M/GTX 680MX)
+- ION
+- X class (Tesla X2090)
+- M class (M1060/M2050/M2070/M2070-Q/M2075/M2090)
+- C class (Tesla C*)
+- NVS series (NVS 300/NVS 310/315/NVS 510)
+- NVS mobile series (NVS 2100M/NVS 3100M/NVS 4200M/NVS 5100M/
+  NVS 5200M/NVS 5400M)
+- Quadro SDI
+- Quadro Sync series (G-Sync II/Sync)
+- Quadro Plex series
+- Quadro NVS series (NVS 285/NVS 290/NVS 295/NVS 420/NVS 440/NVS 450)
+- Quadro NVS mobile series (NVS 110M/NVS 120M/MVS 130M/NVS 135M/
+  NVS 140M/NVS 150M/NVS 160M/NVS 320M/NVS 510M)
+- Quadro FX series (CX, FX 350/370/380/470/540/550/560/570/580/1400/
+  1500/1700/1800/2000/3450/3500/3700/3800/4000/4500/4500 X2/4600/
+  4700 X2/4800/5500/5600/5800)
+- Quadro FX mobile series
+- Quadro series (400/410/600/2000/2000D/4000/5000/6000/K5000)
+- Quadro mobile series (1000M/2000M/3000M/4000M/5000M/5010M/K1000M/
+  K2000M/K3000M/K4000M/K5000M)
+- GRID (K1/K2)
 
 %description -l pl.UTF-8
 Usprawnione sterowniki dla kart graficznych nVidia do serwera Xorg,
 dające wysokowydajną akcelerację OpenGL, obsługę AGP i wielu monitorów
-2D. Obsługują w miarę nowe karty NVIDIA GeForce (od wersji GeForce2
-MX) oraz Quadro (od wersji Quadro4).
+2D.
 
-Starsze układy graficzne nie są obsługiwane przez ten pakiet:
-- NV1 i RIVA 128/128ZX są obsługiwane przez sterownik nv z Xorg
-- TNT/TNT2/GeForce 256/GeForce 2 Ultra/Quadro 2 są obsługiwane przez
-  sterowniki -legacy
+Obsługują karty:
+- GeForce serii 6
+- GeForce serii 7/Go 7
+- GeForce serii 8/8M
+- GeForce serii 9/9M
+- GeForce serii 100/100M
+- GeForce serii 200/200M (oprócz G205M)
+- GeForce serii 300/300M
+- GeForce serii 400/400M (oprócz 405M)
+- GeForce serii 500/500M
+- GeForce serii 600 (oprócz GT 635/GTX 645/GTX 650 Ti BOOST)
+- GeForce serii 600M (oprócz GT 625M/GTX 680MX)
+- ION
+- X class (Tesla X2090)
+- M class (M1060/M2050/M2070/M2070-Q/M2075/M2090)
+- C class (Tesla C*)
+- serii NVS (NVS 300/NVS 310/315/NVS 510)
+- serii NVS mobile (NVS 2100M/NVS 3100M/NVS 4200M/NVS 5100M/
+  NVS 5200M/NVS 5400M)
+- Quadro SDI
+- Quadro serii Sync (G-Sync II/Sync)
+- Quadro serii Plex
+- Quadro serii NVS (NVS 285/NVS 290/NVS 295/NVS 420/NVS 440/NVS 450)
+- Quadro serii NVS mobile (NVS 110M/NVS 120M/MVS 130M/NVS 135M/
+  NVS 140M/NVS 150M/NVS 160M/NVS 320M/NVS 510M)
+- Quadro serii FX (CX, FX 350/370/380/470/540/550/560/570/580/1400/
+  1500/1700/1800/2000/3450/3500/3700/3800/4000/4500/4500 X2/4600/
+  4700 X2/4800/5500/5600/5800)
+- Quadro serii FX mobile
+- Quadro (400/410/600/2000/2000D/4000/5000/6000/K5000)
+- Quadro mobile (1000M/2000M/3000M/4000M/5000M/5010M/K1000M/
+  K2000M/K3000M/K4000M/K5000M)
+- GRID (K1/K2)
 
 %package libs
 Summary:	OpenGL (GL and GLX) Nvidia libraries
