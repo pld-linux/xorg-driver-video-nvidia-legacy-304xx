@@ -1,6 +1,5 @@
 # TODO
-# - should -libs Require main package?
-# - drop binary-only nvidia-settings from here, and use nvidia-settings.spec for it?
+# - drop binary-only nvidia-settings from here, and use nvidia-settings.spec for it
 # - kernel-drm is required on newer kernels. driver for kernel-longterm not requires drm
 #
 # Conditional build:
@@ -51,7 +50,7 @@ Patch2:		linux-4.0.patch
 Patch3:		linux-4.12.patch
 Patch4:		kernel-4.14.patch
 Patch5:		kernel-4.15.patch
-URL:		http://www.nvidia.com/object/unix.html
+URL:		https://www.nvidia.com/en-us/drivers/unix/
 BuildRequires:	rpmbuild(macros) >= 1.701
 %{?with_kernel:%{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:2.6.20.2}}
 BuildRequires:	sed >= 4.0
